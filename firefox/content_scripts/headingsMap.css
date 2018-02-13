@@ -1,0 +1,17 @@
+html[data-headings-map-active=true] {
+}
+html[data-headings-map-active=true] body {
+    padding-left: 352px;
+    position: relative;
+}
+#headingsMapIframeWrapper {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    z-index: 100000;
+    overflow: auto;
+    background: #FFFFFF;
+    width: 350px;
+    visibility: hidden;
+    box-shadow: 0 0 5px rgba(50, 50, 50, .7);
+}

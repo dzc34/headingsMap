@@ -1,0 +1,28 @@
+{
+   "author": "Rumoroso",
+   "background": {
+      "page": "background.html"
+   },
+   "browser_action": {
+      "default_icon": "headingsMap.png",
+      "default_title": "HeadingsMap"
+   },
+   "content_scripts": [ {
+      "css": [ "style.css" ],
+      "js": [ "headingsmap.js" ],
+      "matches": [ "http://*/*", "https://*/*", "file:///*/*" ]
+   } ],
+   "description": "It builds a navigable map of the html document with html5 outline algorithm and with the headings structure",
+   "icons": {
+      "128": "headingsMap128.png",
+      "16": "headingsMap16.png",
+      "48": "headingsMap48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy25UY5K3FEO6IMQuXIO4puZXVjmksKplo2X8lIBW3w79jFEBXegRYo6JWia0Tl7QQtffvjQXDoyXszDJTb9yKLBFIPjitI+xHFsl+dTeaJvaX0yu4tNQoJ4NE9zEsUJFP2Qdcx82d/ssGzvvyPjNfOBeyQKZQrjzUv7qgQqRXBitrvQMkItB14OKLM9OELckDlsp6FFaz+2oo2HoehSl3y4HCGO1hMsGM8tIrQ7OkrxQxyK5kJC8bYXhzrqk/m5uIxbAVOIX5h+7PJZExIGe57eEhAPFXlpkM2HKIckWDdFe+iGCFd4qVHAZzgr/jQknZXhzFVzC0bGKJGT1B9QKIwIDAQAB",
+   "manifest_version": 2,
+   "name": "HeadingsMap",
+   "options_page": "options.html",
+   "permissions": [ "tabs", "http://*/*", "https://*/*", "storage" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "1.0.9"
+}

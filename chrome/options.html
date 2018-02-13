@@ -1,0 +1,34 @@
+<html>
+<head>
+	<title>HeadingsMap Options</title></head>
+	<style type="text/css">
+		html,body{font-family: Arial,Verdana,sans-serif;}
+		h1{width: 500px;margin: 100px auto 10px;text-align: center}
+		div{width: 500px;padding: 20px;border-radius: 20px;margin: 0 auto;border: 1px solid #ccc}
+		h2{font-size: 1.5em;clear: both;margin: 0 0 10px;border-bottom: 1px solid #999}
+		p{clear: both;width: 100%;padding: 10px 0}
+		label{width: 70%;text-align: right;float: left;margin-right: 10px}
+		select{float:left;vertical-align: middle}
+		label,select{line-height: 1.6}
+		.clear{clear:both;display: block}
+		#status{font-size:.8em;float:left;margin-left: 5px;line-height: 2}
+	</style>
+<body>
+	<h1>HeadingsMap Conf.</h1>
+<div>
+<h2>HTML 5 Outline</h2>
+<p><label for="headingsMap_outLevels">Mostrar niveles:</label> <select name="headingsMap_outLevels" id="headingsMap_outLevels"><option value="true">SI</option><option value="false">No</option></select></p>
+<p><label for="headingsMap_outElem">Mostrar nombre de elemento:</label> <select name="headingsMap_outElem" id="headingsMap_outElem"><option value="true">SI</option><option value="false">No</option></select></p>
+<p><label for="headingsMap_outError">Error en secciones sin titulo:</label> <select name="headingsMap_outError" id="headingsMap_outError"><option value="true">SI</option><option value="false">No</option></select></p>
+<h2>Headings</h2>
+<p><label for="headingsMap_headLevels">Mostrar niveles:</label> <select name="headingsMap_headLevels" id="headingsMap_headLevels"><option value="true">SI</option><option value="false">No</option></select></p>
+<p><label for="headingsMap_headError">Mostrar errores:</label> <select name="headingsMap_headError" id="headingsMap_headError"><option value="true">SI</option><option value="false">No</option></select></p>
+<p><label for="headingsMap_headErrorh2">Error cuando el primer encabezado no es h1:</label> <select name="headingsMap_headErrorh2" id="headingsMap_headErrorh2"><option value="true">SI</option><option value="false">No</option></select></p>
+<span id="status"></span>
+<span class="clear"></span>
+</div>
+<script src="options.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+{
+  "name": "headingsMap",
+  "description": "To show the headings structure of the documents",
+  "author": "Rumoroso",
+  "manifest_version": 2,
+  "version": "3.0.0",
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "32": "icons/headingsMap.png"
+    },
+    "default_title": "headingsMap"
+  },
+  "web_accessible_resources": [
+    "html/*"
+  ],
+  "options_ui": {
+    "page": "options/options.html"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O"
+      }
+    }
+  },
+  "applications": {
+    "gecko": {
+      "id": "headings@niquelheadings.net",
+      "strict_min_version": "58.0a1"
+    }
+  }
+}
