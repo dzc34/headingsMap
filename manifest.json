@@ -31,6 +31,16 @@
       "suggested_key": {
         "default": "Ctrl+Shift+O"
       }
+    },
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O"
+      }
     }
+  },
+  "sidebar_action": {
+    "default_icon": "icons/star.png",
+    "default_title" : "Annotator",
+    "default_panel": "sidebar/panel.html"
   }
 }

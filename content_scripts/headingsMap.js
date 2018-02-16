@@ -55,6 +55,7 @@
 
     chrome.runtime.onMessage.addListener((message) => {
         settings = Object.assign({}, defaultSettings, message.settings);
+        console.log(message)
 
         showHeadLevels = settings.showHeadLevels;
         showHeadError = settings.showHeadError;
