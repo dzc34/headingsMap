@@ -1,21 +1,19 @@
 var tabId;
 
 // open/close when clicking the toolbar button
-browser.browserAction.onClicked.addListener(injectHeadingsMapScript);
+chrome.browserAction.onClicked.addListener(injectHeadingsMapScript);
 
 // listen for messages
-browser.runtime.onConnect.addListener(connected);
+chrome.runtime.onConnect.addListener(connected);
 
 function injectHeadingsMapScript(tab) {
     tabId = tab.id;
 
-    browser.tabs
-        .executeScript(tabId, {file: 'content_scripts/headingsMap.js'})
-        .then(showHeadingsMap, reportError);
+    chrome.tabs
+        .executeScript(tabId, {file: 'content_scripts/headingsMap.js'}, showHeadingsMap);
 
-    browser.tabs
-        .insertCSS({file: 'content_scripts/headingsMap.css'})
-        .then(null, reportError);
+    chrome.tabs
+        .insertCSS({file: 'content_scripts/headingsMap.css'});
 }
 
 function connected(portFromCS) {
@@ -23,7 +21,7 @@ function connected(portFromCS) {
         if(message.action === 'update'){
             updateHeadingsMap();
         } else if (message.action === 'settings') {
-            var openOptionsPage = browser.runtime.openOptionsPage();
+            var openOptionsPage = chrome.runtime.openOptionsPage();
 
             openOptionsPage.then(reportSuccess, reportError);
         }
@@ -31,16 +29,14 @@ function connected(portFromCS) {
 }
 
 function sendActionToHeadingsMapScript(action){
-    var message = {action: action},
-        settings = browser.storage.local.get();
+    var message = {action: action};
 
-    settings
-        .then(sendActionWithSettings);
+    chrome.storage.local.get(null, sendActionWithSettings);
 
     function sendActionWithSettings(settings) {
         message.settings = settings;
 
-        browser.tabs
+        chrome.tabs
             .sendMessage(tabId, message);
     }
 }

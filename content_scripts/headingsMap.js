@@ -1,8 +1,17 @@
 (function () {
-    var headingMap, outlineMap,
+    var body, bodyParent,
+        headingMap, outlineMap,
         outlineMapTabLink, headingsTabLink,
-        settings, outLevels, outElem, outError, headLevels, headError, headErrorH1,
-        iframeWidget,
+        settings, showOutLevels, showOutElem, showOutError, showHeadLevels, showHeadError, showHeadErrorH1,
+        iframeWidget, iframeContentDocument, iframeBody,
+        defaultSettings = {
+            showHeadLevels: true,
+            showHeadError: true,
+            showHeadErrorH1: true,
+            showOutLevels: true,
+            showOutElem: true,
+            showOutError: true,
+        },
         sectionsId = [],
         outlineTabLinkId = 'outlineTab',
         headingsTabLinkId = 'headingsTab',
@@ -14,13 +23,14 @@
         classPrefix = 'biohead',
         headErrorClass = 'head_error',
         noHeadClass = 'no-headed',
+        untitledDocumentText = 'Untitled document',
         noHeadingsText = 'No headings',
         noHeadElementText = 'no head element',
         headerIdPrefix = 'hmap-',
         sectionIdPrefix = 'smap-',
         listClassPrefix = 'headingsMap-h',
         documentWindows = [],
-        headingsMapPort = browser.runtime.connect({name: 'port-from-cs'}),
+        headingsMapPort = chrome.runtime.connect({name: 'port-from-cs'}),
         mutationObserverParams = {childList: true, subtree: true},
         defaultDebounceTime = 250;
 
@@ -29,45 +39,33 @@
     }
     window.hasHeadingsMapRun = true;
 
-    let body = document.body,
-        bodyParent = body.parentNode;
+    body = document.body;
+    bodyParent = body.parentNode;
 
     let bodyMutationEndingObserver, onEndingDOMChangeCallback;
 
-    // Mutation callback executed as soon the mutation ends
-    onEndingDOMChangeCallback = function (mutationsList) {
+    onEndingDOMChangeCallback = function (mutations) {
         var headingsMapWidget = getWidget();
 
-        if (getIframeBody().innerHTML != '<div id="headingsMapWrapper">' + headingsMapWidget.innerHTML + '</div>') {
+        if (iframeBody.innerHTML != '<div id="headingsMapWrapper">' + headingsMapWidget.innerHTML + '</div>') {
             updateWidget(headingsMapWidget);
         }
-
-        // for(var mutation of mutationsList) {
-        //     console.log(mutation.type);
-        // }
     };
     bodyMutationEndingObserver = addMutationObserver(body, mutationObserverParams, debounceFn(onEndingDOMChangeCallback, false));
 
-    // Mutation callback executed as soon the mutation starts
-    // onStartingDOMChangeCallback = function (mutationsList) {};
-    // bodyMutationStartingObserver = addMutationObserver(body, mutationObserverParams, debounceFn(onStartingDOMChangeCallback, true));
+    chrome.runtime.onMessage.addListener((message) => {
+        settings = Object.assign({}, defaultSettings, message.settings);
 
-    browser.runtime.onMessage.addListener((message) => {
-        // if (message.action != 'toggle') {
-        //     return;
-        // }
-
-        settings = message.settings;
-
-        headLevels = settings.headLevels;
-        headError = settings.headError;
-        headErrorH1 = settings.headErrorH1;
-        outLevels = settings.outLevels;
-        outElem = settings.outElem;
-        outError = settings.outError;
+        showHeadLevels = settings.showHeadLevels;
+        showHeadError = settings.showHeadError;
+        showHeadErrorH1 = settings.showHeadErrorH1;
+        showOutLevels = settings.showOutLevels;
+        showOutElem = settings.showOutElem;
+        showOutError = settings.showOutError;
 
         let headingsMapWidget = getWidget(),
             previous = document.getElementById(headingsMapIframeWrapperId);
+
 
         if (previous) {
             if (message.action === 'toggle') {
@@ -80,9 +78,11 @@
         }
     });
 
-    function HTML5Outline() {
+    function HTML5Outline(documentWindow) {
         var outLine = null,
-            bodyElement = document.body,
+            outlineSection = generateSectionForMap(documentWindow),
+            documentToCheck = documentWindow.document,
+            bodyElement = documentToCheck.body,
             ownerDocument = bodyElement.ownerDocument || window.document,
             idCounter = 0,
             generateHTMLListFromSections = function (sections) {
@@ -260,13 +260,13 @@
                         itemTextContent = ' Untitled (' + itemTextContent.replace(noHeadClass, '') + ')';
                         treerow = createElement('span', {
                             'title': itemTextContent,
-                            class: outError ? noHeadClass : undefined
+                            class: showOutError ? noHeadClass : undefined
                         });
                     }
 
                     span = createElement('span', {class: 'head'});
 
-                    if (outElem) {
+                    if (showOutElem) {
                         text = createTextNode('[' + self.startingNode.tagName.toLowerCase().replace('body', 'document') + '] - ');
                     } else {
                         text = createTextNode('');
@@ -302,14 +302,16 @@
 
         if (eeeeeee != null) {
             outLine = eeeeeee.outline.asHTML();
-            outLine.setAttribute('id', outlineMapId);
+            // outLine.setAttribute('id', outlineMapId);
 
-            if (outLevels === true) {
+            if (showOutLevels === true) {
                 addLevelIndex(outLine, 0);
             }
         }
 
-        return outLine;
+        outlineSection.appendChild(outLine);
+
+        return outlineSection;
 
         function addLevelIndex(list, type) {
             var levelIndex, span, childNode,
@@ -318,7 +320,7 @@
             for (var i = 0, childNodesListLength = childNodesList.length; i < childNodesListLength; i++) {
                 childNode = childNodesList[i];
 
-                levelIndex = createTextNode(i + 1 + (outElem ? ' ' : ' - '));
+                levelIndex = createTextNode(i + 1 + (showOutElem ? ' ' : ' - '));
 
                 span = createElement('span', {class: 'head_number'});
                 span.appendChild(levelIndex);
@@ -335,18 +337,22 @@
         }
     }
 
-    function headingsMap() {
-        var mainList, list, item, header, headerId, level, noHeadingsTextNode, noHeadingsSpanNode,
+    function headingsMap(documentWindow) {
+        var mainList, headersList, item, header, headerId, level, noHeadingsTextNode, noHeadingsSpanNode,
             parentList, linkElement, descendantListElement, headerTextNode, precedingHeadLevel, parentListClass,
             classValue,
             headLevelsSpanElement, headLevelsSpanTextNode,
             previous = 0,
             previousCorrect = 0,
             currentLevel = 0,
-            headingElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            headingsMapSection = generateSectionForMap(documentWindow),
+            documentToCheck = documentWindow.document,
+            headingElements = documentToCheck.querySelectorAll('h1, h2, h3, h4, h5, h6');
 
-        mainList = createElement('ul', {class: listClassPrefix + currentLevel, id: headingsMapId});
-        list = mainList;
+        mainList = createElement('ul', {class: listClassPrefix + currentLevel});
+        headersList = mainList;
+
+        headingsMapSection.appendChild(headersList);
 
         if (!headingElements.length) {
             item = createElement('li');
@@ -356,7 +362,7 @@
             noHeadingsSpanNode.appendChild(noHeadingsTextNode);
             item.appendChild(noHeadingsSpanNode);
 
-            return list;
+            return headingsMapSection;
         }
 
         for (var i = 0, headingElementsLength = headingElements.length; i < headingElementsLength; i++) {
@@ -420,7 +426,7 @@
             linkElement = createElement('a', {tabindex: '0', 'data-header-id': headerId});
             linkElement.onclick = scrollToHeader;
 
-            if (headLevels === true) {
+            if (showHeadLevels === true) {
                 headLevelsSpanElement = createElement('span', {class: 'head'});
 
                 headLevelsSpanTextNode = createTextNode(currentLevel + ' - ');
@@ -434,14 +440,14 @@
             mainList.setAttribute('class', classPrefix + level);
 
             if (currentLevel > previous + 1) {
-                if ((i === 0 && headErrorH1 === true && headError === true) || (i > 0 && headError === true)) {
+                if ((i === 0 && showHeadErrorH1 === true && showHeadError === true) || (i > 0 && showHeadError === true)) {
                     linkElement.setAttribute('class', headErrorClass);
                 }
             }
             previous = currentLevel;
         }
 
-        return list;
+        return headingsMapSection;
     }
 
     function scrollToHeader(event) {
@@ -458,7 +464,7 @@
                 element = element.offsetParent;
 
                 // returns null when element has style.display set to "none"
-                if(element === null){
+                if (element === null) {
                     break;
                 }
 
@@ -472,8 +478,15 @@
     function getWidget() {
         var widgetContent;
 
-        headingMap = headingsMap();
-        outlineMap = HTML5Outline();
+        documentWindows = getDocuments();
+
+        headingMap = createElement('div', {id: headingsMapId});
+        outlineMap = createElement('div', {id: outlineMapId});
+
+        for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
+            headingMap.appendChild(headingsMap(documentWindows[i]));
+            outlineMap.appendChild(HTML5Outline(documentWindows[i]));
+        }
 
         widgetContent = getWidgetContent(headingMap, outlineMap);
 
@@ -507,7 +520,7 @@
 
             return mapsContainer;
 
-            function refreshWidget(){
+            function refreshWidget() {
                 sendMessageToBackgroundScript({action: 'update'});
             }
 
@@ -603,11 +616,7 @@
     }
 
     function openWidget(widgetContent) {
-        iframeWidget = createIframeWidget(onload);
-        documentWindows = getDocuments();
-        iframeWidget.onload = function () {
-            updateIframeContent(widgetContent);
-        }
+        iframeWidget = createIframeWidget(widgetContent);
     }
 
     function updateWidget(widgetContent) {
@@ -624,38 +633,45 @@
         bodyMutationEndingObserver()
     }
 
-    function createIframeWidget(onload) {
-        var iframe = createElement('iframe');
+    function createIframeWidget(iframeContent) {
+        var baseURL = chrome.extension.getURL('html/'),
+            iframeCSS = getFileContent(baseURL + 'style.css'),
+            iframeHead = '<base href="' + baseURL + '" /><style>' + iframeCSS + '</style>',
+            iframeWidget = createElement('iframe', {'id': headingsMapIframeWrapperId}),
+            iframeWidgetContentWindow;
 
-        iframe.setAttribute('id', headingsMapIframeWrapperId);
-        iframe.src = browser.extension.getURL("html/sidebar.html");
-        bodyParent.insertBefore(iframe, body);
+        bodyParent.insertBefore(iframeWidget, body);
         bodyParent.setAttribute('data-headings-map-active', 'true');
 
-        if (typeof onload === 'function') {
-            iframe.onload = onload;
-        }
+        iframeWidgetContentWindow = iframeWidget.contentWindow;
+        iframeWidgetContentWindow.stop();
 
-        return iframe;
+        iframeContentDocument = iframeWidgetContentWindow.document;
+        iframeBody = iframeContentDocument.body;
+        iframeContentDocument.head.innerHTML = iframeHead;
+
+        iframeBody.appendChild(iframeContent);
+        iframeWidget.style.visibility = 'visible';
+
+        return iframeWidget;
+
+        function getFileContent(fileURL) {
+            var xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.open('GET', fileURL, false);
+            xmlhttp.send();
+
+            return xmlhttp.responseText;
+        }
     }
 
     function updateIframeContent(widgetContent) {
-        var doc = iframeWidget.contentDocument ? iframeWidget.contentDocument : iframeWidget.contentWindow.document,
-            iframeBody = doc.body;
-
         while (iframeBody.firstChild) {
             iframeBody.removeChild(iframeBody.firstChild);
         }
 
         iframeBody.appendChild(widgetContent);
         iframeWidget.style.visibility = 'visible';
-    }
-
-    function getIframeBody() {
-        var doc = iframeWidget.contentDocument ? iframeWidget.contentDocument : iframeWidget.contentWindow.document,
-            iframeBody = doc.body;
-
-        return iframeBody;
     }
 
     function cleanHeaderIds() {
@@ -706,7 +722,7 @@
         frames = act.document.getElementsByTagName('iframe');
         for (var i = 0, framesLength = frames.length; i < framesLength; i++) {
 
-            if (frames[i].getAttribute('src').indexOf('moz-extension') === -1) {
+            if (frames[i].getAttribute('id') != headingsMapIframeWrapperId) {
                 currentFrame = act.frames[i];
                 currentDocument = currentFrame.document;
 
@@ -722,6 +738,8 @@
         return documentWindows;
     }
 
+    // To debounce the execution.
+    // executeAtTheBeginning controls when it will be executed
     function debounceFn(func, executeAtTheBeginning, wait) {
         var timeout;
 
@@ -755,7 +773,35 @@
         return observer.disconnect;
     }
 
-    function sendMessageToBackgroundScript(messageObject){
+    function sendMessageToBackgroundScript(messageObject) {
         headingsMapPort.postMessage(messageObject);
+    }
+
+    function generateSectionForMap(documentWindow) {
+        var sectionSubHeaderContent,
+            documentToCheck = documentWindow.document,
+            section = createElement('section'),
+            titleElement = documentToCheck.querySelectorAll('title')[0],
+            titleText = titleElement ? getText(titleElement) : untitledDocumentText,
+            titleTextNode = createTextNode(titleText),
+            sectionHeader = createElement('h2'),
+            sectionSubHeader = createElement('p'),
+            locationHref = documentWindow.location.href,
+            sectionSubHeaderTextNode = createTextNode(locationHref);
+
+        sectionHeader.appendChild(titleTextNode);
+        section.appendChild(sectionHeader);
+
+        if(locationHref != 'about:blank'){
+            sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank'});
+            sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
+        }else{
+            sectionSubHeaderContent = sectionSubHeaderTextNode;
+        }
+
+        sectionSubHeader.appendChild(sectionSubHeaderContent);
+        section.appendChild(sectionSubHeader);
+
+        return section;
     }
 })();
