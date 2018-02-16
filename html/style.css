@@ -16,10 +16,25 @@ html, body {
     padding: 25px 1% 5px;
 }
 
-#headingsMapWrapper ul#headingsMap_outline,
-#headingsMapWrapper ul#headingsMap_outline ul,
-#headingsMapWrapper ul#headingsMap_headings,
-#headingsMapWrapper ul#headingsMap_headings ul {
+#headingsMapWrapper h2 {
+    font-size: 1.2em;
+    margin: 5px;
+}
+
+#headingsMapWrapper section {
+    margin-top: 5px;
+}
+#headingsMapWrapper section + section {
+    border-top: 1px solid #CCC
+}
+
+#headingsMapWrapper p {
+    font-size: .8em;
+    margin: 0 4px 4px;
+}
+
+#headingsMapWrapper #headingsMap_outline ul,
+#headingsMapWrapper #headingsMap_headings ul {
     font-weight: normal;
     font-size: 1em;
     color: #444;
@@ -29,25 +44,29 @@ html, body {
     background: #FFF url("data:image/png;base64,R0lGODlhAQAKAIAAAIiIiAAAACH5BAAAAAAALAAAAAABAAoAAAIDhI8FADs=") 3px top repeat-y;
 }
 
-#headingsMapWrapper ul#headingsMap_outline ul,
-#headingsMapWrapper ul#headingsMap_headings ul {
+#headingsMapWrapper #headingsMap_outline ul ul,
+#headingsMapWrapper #headingsMap_headings ul ul {
     margin: 0 0 0 5px;
     padding: 0;
     width: 100%;
 }
 
-#headingsMapWrapper ul#headingsMap_outline,
-#headingsMapWrapper ul#headingsMap_headings {
+#headingsMapWrapper #headingsMap_outline,
+#headingsMapWrapper #headingsMap_headings {
     display: none;
-    font-weight: normal;
     border: 1px solid #CCC;
     margin-top: -1px;
+}
+
+#headingsMapWrapper #headingsMap_outline section > ul,
+#headingsMapWrapper #headingsMap_headings section > ul {
+    font-weight: normal;
     padding-left: 10px;
     background-position: 13px top;
 }
 
-#headingsMapWrapper ul#headingsMap_outline:before,
-#headingsMapWrapper ul#headingsMap_headings:before {
+#headingsMapWrapper #headingsMap_outline section > ul:before,
+#headingsMapWrapper #headingsMap_headings section > ul:before {
     content: ' ';
     width: 10px;
     height: 10px;
@@ -76,8 +95,13 @@ html, body {
     cursor: pointer;
 }
 
+#headingsMapWrapper a:focus {
+    outline: none;
+}
+
+#headingsMapWrapper p,
 #headingsMapWrapper a,
-#headingsMapWrapper .no-headed {
+#headingsMapWrapper .no-headed{
     font-weight: normal;
     font-size: 1em;
     text-decoration: none;

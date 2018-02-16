@@ -1,7 +1,8 @@
 html[data-headings-map-active=true] {
 }
 html[data-headings-map-active=true] body {
-    padding-left: 352px;
+    margin-left: 350px;
+    padding-left: 0;
     position: relative;
 }
 #headingsMapIframeWrapper {
