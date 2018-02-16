@@ -1,10 +1,10 @@
-html[data-headings-map-active=true] {
-}
 html[data-headings-map-active=true] body {
     margin-left: 350px;
+    padding-right: 350px;
     padding-left: 0;
     position: relative;
 }
+
 #headingsMapIframeWrapper {
     position: fixed;
     height: 100%;
