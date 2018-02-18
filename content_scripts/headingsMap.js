@@ -63,7 +63,7 @@
         showOutElem = settings.showOutElem;
         showOutError = settings.showOutError;
 
-        let headingsMapWidget = getWidget(),
+        let headingsMapWidget,
             previous = document.getElementById(headingsMapIframeWrapperId);
 
 
@@ -71,9 +71,11 @@
             if (message.action === 'toggle') {
                 closeWidget();
             } else if (message.action === 'update') {
+                headingsMapWidget = getWidget();
                 updateWidget(headingsMapWidget);
             }
         } else if (message.action === 'toggle') {
+            headingsMapWidget = getWidget();
             openWidget(headingsMapWidget);
         }
     });
@@ -476,7 +478,7 @@
     }
 
     function getWidget() {
-        var widgetContent;
+        var widgetContent, widgetLists, collapser;
 
         documentWindows = getDocuments();
 
@@ -491,6 +493,14 @@
         widgetContent = getWidgetContent(headingMap, outlineMap);
 
         switchPanel(localStorage['headingsMap_selectedTab'] || headingsMapId);
+
+        widgetLists = widgetContent.querySelectorAll('ul ul');
+
+        for(var i = 0, widgetListsLenght = widgetLists.length; i < widgetListsLenght; i++){
+            collapser = createElement('span', {class: 'collapser'});
+            collapser.addEventListener('click', toggleList)
+            widgetLists[i].parentNode.insertBefore(collapser, widgetLists[i]);
+        }
 
         return widgetContent;
 
@@ -539,6 +549,19 @@
                 tabButton.appendChild(textNode);
 
                 return tabButton;
+            }
+        }
+
+        function toggleList (event){
+            var collapser = event.target,
+                listToToggle = collapser.nextSibling;
+
+            if(listToToggle.style.display === 'none'){
+                listToToggle.style.display = 'block';
+                collapser.className = 'collapser';
+            }else{
+                listToToggle.style.display = 'none';
+                collapser.className = 'collapser collapsed';
             }
         }
     }
@@ -616,11 +639,8 @@
     }
 
     function openWidget(widgetContent) {
-        iframeWidget = createIframeWidget(widgetContent);
-    }
-
-    function updateWidget(widgetContent) {
-        updateIframeContent(widgetContent)
+        iframeWidget = createIframeWidget();
+        updateWidget(widgetContent)
     }
 
     function closeWidget() {
@@ -650,9 +670,6 @@
         iframeBody = iframeContentDocument.body;
         iframeContentDocument.head.innerHTML = iframeHead;
 
-        iframeBody.appendChild(iframeContent);
-        iframeWidget.style.visibility = 'visible';
-
         return iframeWidget;
 
         function getFileContent(fileURL) {
@@ -665,13 +682,12 @@
         }
     }
 
-    function updateIframeContent(widgetContent) {
+    function updateWidget(widgetContent) {
         while (iframeBody.firstChild) {
             iframeBody.removeChild(iframeBody.firstChild);
         }
 
         iframeBody.appendChild(widgetContent);
-        iframeWidget.style.visibility = 'visible';
     }
 
     function cleanHeaderIds() {
@@ -792,10 +808,10 @@
         sectionHeader.appendChild(titleTextNode);
         section.appendChild(sectionHeader);
 
-        if(locationHref != 'about:blank'){
+        if (locationHref != 'about:blank') {
             sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank'});
             sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
-        }else{
+        } else {
             sectionSubHeaderContent = sectionSubHeaderTextNode;
         }
 
