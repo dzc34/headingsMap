@@ -1,10 +1,26 @@
 chrome.tabs.query({currentWindow: true, active: true}, injectHeadingsMapScript);
 
 var tabId;
+var headingsMapPort = chrome.runtime.connect({name: 'port-from-cs'});
+const contentBox = document.querySelector("button");
+
+contentBox.addEventListener("click", () => {
+//    sendMessageToBackgroundScript({action: 'settings'});
+    browser.tabs
+        .executeScript({file: 'content_scripts/headingsMap.js'}, showHeadingsMap);
+
+    browser.tabs
+        .insertCSS({file: 'content_scripts/headingsMap.css'});
+
+});
+
+function sendMessageToBackgroundScript(messageObject) {
+    headingsMapPort.postMessage(messageObject);
+}
 
 function injectHeadingsMapScript(tab) {
     tabId = tab.id;
-    console.log(1111)
+
     chrome.tabs
         .executeScript(tabId, {file: '../content_scripts/headingsMap.js'}, showHeadingsMap);
 
@@ -14,7 +30,7 @@ function injectHeadingsMapScript(tab) {
 
 function connected(portFromCS) {
     portFromCS.onMessage.addListener(function (message) {
-        if(message.action === 'update'){
+        if (message.action === 'update') {
             updateHeadingsMap();
         } else if (message.action === 'settings') {
             var openOptionsPage = chrome.runtime.openOptionsPage();
@@ -24,7 +40,7 @@ function connected(portFromCS) {
     });
 }
 
-function sendActionToHeadingsMapScript(action){
+function sendActionToHeadingsMapScript(action) {
     var message = {action: action};
 
     chrome.storage.local.get(null, sendActionWithSettings);
@@ -45,6 +61,8 @@ function updateHeadingsMap() {
     sendActionToHeadingsMapScript('update');
 }
 
-function reportSuccess() {}
+function reportSuccess() {
+}
 
-function reportError(error) {}
+function reportError(error) {
+}

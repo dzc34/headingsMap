@@ -1,3 +1,4 @@
+alert(8)
 (function () {
     var body, bodyParent,
         headingMap, outlineMap,
