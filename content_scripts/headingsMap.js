@@ -80,9 +80,9 @@
         }
     });
 
-    function HTML5Outline(documentWindow) {
+    function HTML5Outline(documentWindow, documentIndex) {
         var outLine = null,
-            outlineSection = generateSectionForMap(documentWindow),
+            outlineSection = generateSectionForMap(documentWindow, documentIndex),
             documentToCheck = documentWindow.document,
             bodyElement = documentToCheck.body,
             ownerDocument = bodyElement.ownerDocument || window.document,
@@ -339,7 +339,7 @@
         }
     }
 
-    function headingsMap(documentWindow) {
+    function headingsMap(documentWindow, documentIndex) {
         var mainList, headersList, item, header, headerId, level, noHeadingsTextNode, noHeadingsSpanNode,
             parentList, linkElement, descendantListElement, headerTextNode, precedingHeadLevel, parentListClass,
             classValue,
@@ -347,7 +347,7 @@
             previous = 0,
             previousCorrect = 0,
             currentLevel = 0,
-            headingsMapSection = generateSectionForMap(documentWindow),
+            headingsMapSection = generateSectionForMap(documentWindow, documentIndex),
             documentToCheck = documentWindow.document,
             headingElements = documentToCheck.querySelectorAll('h1, h2, h3, h4, h5, h6');
 
@@ -486,8 +486,8 @@
         outlineMap = createElement('div', {id: outlineMapId});
 
         for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
-            headingMap.appendChild(headingsMap(documentWindows[i]));
-            outlineMap.appendChild(HTML5Outline(documentWindows[i]));
+            headingMap.appendChild(headingsMap(documentWindows[i], i));
+            outlineMap.appendChild(HTML5Outline(documentWindows[i], i));
         }
 
         widgetContent = getWidgetContent(headingMap, outlineMap);
@@ -496,7 +496,7 @@
 
         widgetLists = widgetContent.querySelectorAll('ul ul');
 
-        for(var i = 0, widgetListsLenght = widgetLists.length; i < widgetListsLenght; i++){
+        for (var i = 0, widgetListsLenght = widgetLists.length; i < widgetListsLenght; i++) {
             collapser = createElement('span', {class: 'collapser'});
             collapser.addEventListener('click', toggleList)
             widgetLists[i].parentNode.insertBefore(collapser, widgetLists[i]);
@@ -552,14 +552,14 @@
             }
         }
 
-        function toggleList (event){
+        function toggleList(event) {
             var collapser = event.target,
                 listToToggle = collapser.nextSibling;
 
-            if(listToToggle.style.display === 'none'){
+            if (listToToggle.style.display === 'none') {
                 listToToggle.style.display = 'block';
                 collapser.className = 'collapser';
-            }else{
+            } else {
                 listToToggle.style.display = 'none';
                 collapser.className = 'collapser collapsed';
             }
@@ -653,7 +653,7 @@
         bodyMutationEndingObserver()
     }
 
-    function createIframeWidget(iframeContent) {
+    function createIframeWidget() {
         var baseURL = chrome.extension.getURL('html/'),
             iframeCSS = getFileContent(baseURL + 'style.css'),
             iframeHead = '<base href="' + baseURL + '" /><style>' + iframeCSS + '</style>',
@@ -793,7 +793,7 @@
         headingsMapPort.postMessage(messageObject);
     }
 
-    function generateSectionForMap(documentWindow) {
+    function generateSectionForMap(documentWindow, documentIndex) {
         var sectionSubHeaderContent,
             documentToCheck = documentWindow.document,
             section = createElement('section'),
@@ -808,15 +808,17 @@
         sectionHeader.appendChild(titleTextNode);
         section.appendChild(sectionHeader);
 
-        if (locationHref != 'about:blank') {
-            sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank'});
-            sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
-        } else {
-            sectionSubHeaderContent = sectionSubHeaderTextNode;
-        }
+        if (documentIndex) {
+            if (locationHref != 'about:blank') {
+                sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank'});
+                sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
+            } else {
+                sectionSubHeaderContent = sectionSubHeaderTextNode;
+            }
 
-        sectionSubHeader.appendChild(sectionSubHeaderContent);
-        section.appendChild(sectionSubHeader);
+            sectionSubHeader.appendChild(sectionSubHeaderContent);
+            section.appendChild(sectionSubHeader);
+        }
 
         return section;
     }
