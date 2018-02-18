@@ -340,7 +340,7 @@
     }
 
     function headingsMap(documentWindow, documentIndex) {
-        var mainList, headersList, item, header, headerId, level, noHeadingsTextNode, noHeadingsSpanNode,
+        var mainList, headersList, item, header, headerId, headerText, level, noHeadingsTextNode, noHeadingsSpanNode,
             parentList, linkElement, descendantListElement, headerTextNode, precedingHeadLevel, parentListClass,
             classValue,
             headLevelsSpanElement, headLevelsSpanTextNode,
@@ -425,7 +425,13 @@
             mainList = item;
             level = currentLevel;
 
-            linkElement = createElement('a', {tabindex: '0', 'data-header-id': headerId});
+            headerText = getText(header);
+
+            linkElement = createElement('a', {
+                tabindex: '0',
+                'data-header-id': headerId,
+                'title': headerText
+            });
             linkElement.onclick = scrollToHeader;
 
             if (showHeadLevels === true) {
@@ -436,7 +442,7 @@
                 linkElement.appendChild(headLevelsSpanElement);
             }
 
-            headerTextNode = createTextNode(getText(header));
+            headerTextNode = createTextNode(headerText);
             linkElement.appendChild(headerTextNode);
             mainList.appendChild(linkElement);
             mainList.setAttribute('class', classPrefix + level);
