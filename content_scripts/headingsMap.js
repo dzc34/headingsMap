@@ -743,7 +743,6 @@
 
         frames = act.document.getElementsByTagName('iframe');
         for (var i = 0, framesLength = frames.length; i < framesLength; i++) {
-
             if (frames[i].getAttribute('id') != headingsMapIframeWrapperId) {
                 currentFrame = act.frames[i];
                 currentDocument = currentFrame.document;
@@ -803,7 +802,8 @@
         var sectionSubHeaderContent,
             documentToCheck = documentWindow.document,
             section = createElement('section'),
-            titleElement = documentToCheck.querySelectorAll('title')[0],
+            titleElements = documentToCheck.querySelectorAll('title'),
+            titleElement = titleElements.length ? documentToCheck.querySelectorAll('title')[0] : false,
             titleText = titleElement ? getText(titleElement) : untitledDocumentText,
             titleTextNode = createTextNode(titleText),
             sectionHeader = createElement('h2'),
