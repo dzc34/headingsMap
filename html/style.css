@@ -46,7 +46,7 @@ html, body {
 
 #headingsMapWrapper #headingsMap_outline ul ul,
 #headingsMapWrapper #headingsMap_headings ul ul {
-    margin: 0 0 0 5px;
+    margin: 0;
     padding: 0;
     width: 100%;
 }
@@ -75,7 +75,7 @@ html, body {
     font-size: 1em;
     color: #444;
     margin: 1px 0;
-    padding: 0 5px 0 19px;
+    padding: 0 5px 0 25px;
     background: url(icons/tree_b.gif) 3px top no-repeat;
 }
 
@@ -193,13 +193,14 @@ html, body {
     display: block;
     cursor: pointer;
     position: absolute;
-    left: -3px;
+    left: 22px;
     font-size: 20px;
-    top: -2px;
+    top: 5px;
+    z-index: 10;
 }
 .collapser.collapsed {
-    left: 0;
     top: -4px;
+    left: 12px;
 }
 .collapser:before{
     content:"\025be";
