@@ -44,10 +44,16 @@
 
     let bodyMutationEndingObserver, onEndingDOMChangeCallback;
 
-    onEndingDOMChangeCallback = function (mutations) {
-        var headingsMapWidget = getWidget();
+    function replaceAll(str, find, replace) {
+        return str.replace(new RegExp(find, 'g'), replace);
+    }
 
-        if (iframeBody.innerHTML != '<div id="headingsMapWrapper">' + headingsMapWidget.innerHTML + '</div>') {
+    onEndingDOMChangeCallback = function (mutations) {
+        var headingsMapWidget = getWidget(),
+            iframeBodyInnerHTML = replaceAll(iframeBody.innerHTML, ' style="display: none;"', ''),
+            headingsMapWidgetInnerHTML = '<div id="headingsMapWrapper">' + replaceAll(headingsMapWidget.innerHTML, ' style="display: none;"', '') + '</div>';
+
+        if (replaceAll(iframeBodyInnerHTML, ' collapsed', '') != replaceAll(headingsMapWidgetInnerHTML, ' collapsed', '')) {
             updateWidget(headingsMapWidget);
         }
     };
@@ -723,7 +729,7 @@
 
         for (var i = 0, sectionsIdLength = sectionsId.length; i < sectionsIdLength; i++) {
             section = document.getElementById(sectionsId[i]);
-            if(section){
+            if (section) {
                 section.removeAttribute('id');
             }
         }
@@ -831,7 +837,11 @@
         // the main document won't show the URL
         if (documentIndex) {
             if (locationHref != 'about:blank') {
-                sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank', title: locationHref});
+                sectionSubHeaderContent = createElement('a', {
+                    href: locationHref,
+                    target: 'blank',
+                    title: locationHref
+                });
                 sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
             } else {
                 sectionSubHeaderContent = sectionSubHeaderTextNode;
