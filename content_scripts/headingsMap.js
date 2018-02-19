@@ -510,8 +510,6 @@
 
         widgetContent = getWidgetContent(headingMap, outlineMap);
 
-        switchPanel(localStorage['headingsMap_selectedTab'] || headingsMapId);
-
         widgetLists = widgetContent.querySelectorAll('ul ul');
 
         for (var i = 0, widgetListsLenght = widgetLists.length; i < widgetListsLenght; i++) {
@@ -658,7 +656,6 @@
 
     function openWidget(widgetContent) {
         iframeWidget = createIframeWidget(widgetContent);
-        // updateWidget(widgetContent)
     }
 
     function closeWidget() {
@@ -698,6 +695,7 @@
                     iframeContentDocument.head.innerHTML = iframeHead;
 
                     iframeBody.appendChild(widgetContent);
+                    switchPanel(localStorage['headingsMap_selectedTab'] || headingsMapId);
                     return iframeWidget;
                 } else {
                     return iframeWidget;
@@ -715,6 +713,8 @@
         }
 
         iframeBody.appendChild(widgetContent);
+        switchPanel(localStorage['headingsMap_selectedTab'] || headingsMapId);
+
     }
 
     function cleanHeaderIds() {
