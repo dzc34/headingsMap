@@ -18,7 +18,7 @@ html, body {
 
 #headingsMapWrapper h2 {
     font-size: 1.2em;
-    margin: 5px;
+    margin: 5px 5px 2px;
 }
 
 #headingsMapWrapper section {
@@ -31,6 +31,7 @@ html, body {
 #headingsMapWrapper p {
     font-size: .8em;
     margin: 0 4px 4px;
+    text-indent: 7px;
 }
 
 #headingsMapWrapper #headingsMap_outline ul,

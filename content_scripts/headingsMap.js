@@ -459,9 +459,12 @@
     }
 
     function scrollToHeader(event) {
+        //TODO: replace "document" with the correct one
         var headerElement = document.getElementById(event.target.getAttribute('data-header-id'));
 
-        document.documentElement.scrollTop = getTopPosition(headerElement);
+        if (headerElement) {
+            document.documentElement.scrollTop = getTopPosition(headerElement);
+        }
 
         function getTopPosition(element) {
             // distance of the current element relative to the top of the offsetParent node
@@ -645,8 +648,8 @@
     }
 
     function openWidget(widgetContent) {
-        iframeWidget = createIframeWidget();
-        updateWidget(widgetContent)
+        iframeWidget = createIframeWidget(widgetContent);
+        // updateWidget(widgetContent)
     }
 
     function closeWidget() {
@@ -659,33 +662,42 @@
         bodyMutationEndingObserver()
     }
 
-    function createIframeWidget() {
-        var baseURL = chrome.extension.getURL('html/'),
-            iframeCSS = getFileContent(baseURL + 'style.css'),
-            iframeHead = '<base href="' + baseURL + '" /><style>' + iframeCSS + '</style>',
+    function createIframeWidget(widgetContent) {
+        var xmlhttp = new XMLHttpRequest(),
+            baseURL = chrome.extension.getURL('html/'),
+            iframeCSS,
+            iframeHead,
             iframeWidget = createElement('iframe', {'id': headingsMapIframeWrapperId}),
             iframeWidgetContentWindow;
 
         bodyParent.insertBefore(iframeWidget, body);
         bodyParent.setAttribute('data-headings-map-active', 'true');
-
         iframeWidgetContentWindow = iframeWidget.contentWindow;
         iframeWidgetContentWindow.stop();
-
         iframeContentDocument = iframeWidgetContentWindow.document;
         iframeBody = iframeContentDocument.body;
-        iframeContentDocument.head.innerHTML = iframeHead;
 
-        return iframeWidget;
+        xmlhttp.open('GET', baseURL + 'style.css', true);
 
-        function getFileContent(fileURL) {
-            var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onload = function (e) {
+            if (xmlhttp.readyState === 4) {
+                if (xmlhttp.status === 200) {
+                    iframeCSS = xmlhttp.responseText;
 
-            xmlhttp.open('GET', fileURL, false);
-            xmlhttp.send();
+                    iframeHead = '<base href="' + baseURL + '" /><style>' + iframeCSS + '</style>';
 
-            return xmlhttp.responseText;
-        }
+                    iframeContentDocument.head.innerHTML = iframeHead;
+
+                    iframeBody.appendChild(widgetContent);
+                    return iframeWidget;
+                } else {
+                    return iframeWidget;
+                }
+            }
+        };
+        xmlhttp.onerror = function (e) {
+        };
+        xmlhttp.send(null);
     }
 
     function updateWidget(widgetContent) {
@@ -711,7 +723,9 @@
 
         for (var i = 0, sectionsIdLength = sectionsId.length; i < sectionsIdLength; i++) {
             section = document.getElementById(sectionsId[i]);
-            section.removeAttribute('id');
+            if(section){
+                section.removeAttribute('id');
+            }
         }
     }
 
@@ -809,14 +823,15 @@
             sectionHeader = createElement('h2'),
             sectionSubHeader = createElement('p'),
             locationHref = documentWindow.location.href,
-            sectionSubHeaderTextNode = createTextNode(locationHref);
+            sectionSubHeaderTextNode = createTextNode('Frame: ' + locationHref);
 
         sectionHeader.appendChild(titleTextNode);
         section.appendChild(sectionHeader);
 
+        // the main document won't show the URL
         if (documentIndex) {
             if (locationHref != 'about:blank') {
-                sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank'});
+                sectionSubHeaderContent = createElement('a', {href: locationHref, target: 'blank', title: locationHref});
                 sectionSubHeaderContent.appendChild(sectionSubHeaderTextNode);
             } else {
                 sectionSubHeaderContent = sectionSubHeaderTextNode;
