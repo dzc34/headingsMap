@@ -1,16 +1,17 @@
 html[data-headings-map-active=true] body {
-    margin-left: 350px;
-    padding-left: 0;
-    position: relative;
+    margin-left: 350px !important;
+    padding-left: 0 !important;
+    position: relative !important;
 }
 
 #headingsMapIframeWrapper {
-    position: fixed;
-    height: 100%;
-    left: 0;
-    z-index: 100000;
-    overflow: auto;
-    background: #FFFFFF;
-    width: 350px;
-    box-shadow: 0 0 5px rgba(50, 50, 50, .7);
+    position: fixed !important;
+    height: 100% !important;
+    margin: 0 !important;
+    left: 0 !important;
+    z-index: 100000 !important;
+    overflow: auto !important;
+    background: #FFFFFF !important;
+    width: 350px !important;
+    box-shadow: 0 0 5px rgba(50, 50, 50, .7) !important;
 }

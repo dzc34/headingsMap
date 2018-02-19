@@ -500,10 +500,13 @@
         headingMap = createElement('div', {id: headingsMapId});
         outlineMap = createElement('div', {id: outlineMapId});
 
-        for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
-            headingMap.appendChild(headingsMap(documentWindows[i], i));
-            outlineMap.appendChild(HTML5Outline(documentWindows[i], i));
-        }
+        headingMap.appendChild(headingsMap(window, 0));
+        outlineMap.appendChild(HTML5Outline(window, 0));
+
+//        for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
+//            headingMap.appendChild(headingsMap(documentWindows[i], i));
+//            outlineMap.appendChild(HTML5Outline(documentWindows[i], i));
+//        }
 
         widgetContent = getWidgetContent(headingMap, outlineMap);
 
@@ -765,14 +768,19 @@
         for (var i = 0, framesLength = frames.length; i < framesLength; i++) {
             if (frames[i].getAttribute('id') != headingsMapIframeWrapperId) {
                 currentFrame = act.frames[i];
-                currentDocument = currentFrame.document;
+                try {
+                    currentDocument = currentFrame.document;
 
-                documentWindows.push(currentFrame);
+                    documentWindows.push(currentFrame);
 
-                if (currentDocument.getElementsByTagName('frame').length || currentDocument.getElementsByTagName('iframe').length) {
-                    getDocuments(currentFrame, documentWindows);
-
+                    if (currentDocument.getElementsByTagName('frame').length || currentDocument.getElementsByTagName('iframe').length) {
+                        getDocuments(currentFrame, documentWindows);
+                    }
                 }
+                catch (err) {
+                    console.log(err.message);
+                }
+
             }
         }
 
