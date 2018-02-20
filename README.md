@@ -4,10 +4,13 @@
 * You can click on the headers so that the document scrolls to the position of the element
 * Detects changes in the DOM and when they finish, updates its content (if necessary)
 * It can also be refreshed manually
-* Compatible with in Chrome and Firefox
+* Compatible with in Chrome and Firefox:
+** Firefox: https://addons.mozilla.org/es/firefox/addon/headingsmap/
+** Chrome: https://chrome.google.com/webstore/detail/headingsmap/flbjommegcjonpdmenkdiocclhjacmbi?hl=es
 * Allow collapsing list of headers by levels
 
 ### Nice to have and/or working on:
+* Create a page with the documentation
 * Show information of all documents that are present, including those that are inside iframes
 * Improve (better code and performance) the changes detection and updates
 * Improve the styling
