@@ -4,7 +4,7 @@
 * You can click on the headers so that the document scrolls to the position of the element
 * Detects changes in the DOM and when they finish, updates its content (if necessary)
 * It can also be refreshed manually
-* Compatible with in Chrome and Firefox:
+* Compatible with Firefox and Firefox:
   * Firefox: https://addons.mozilla.org/es/firefox/addon/headingsmap/
   * Chrome: https://chrome.google.com/webstore/detail/headingsmap/flbjommegcjonpdmenkdiocclhjacmbi?hl=es
 * Allow collapsing list of headers by levels
