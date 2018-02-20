@@ -5,8 +5,8 @@
 * Detects changes in the DOM and when they finish, updates its content (if necessary)
 * It can also be refreshed manually
 * Compatible with in Chrome and Firefox:
-** Firefox: https://addons.mozilla.org/es/firefox/addon/headingsmap/
-** Chrome: https://chrome.google.com/webstore/detail/headingsmap/flbjommegcjonpdmenkdiocclhjacmbi?hl=es
+  * Firefox: https://addons.mozilla.org/es/firefox/addon/headingsmap/
+  * Chrome: https://chrome.google.com/webstore/detail/headingsmap/flbjommegcjonpdmenkdiocclhjacmbi?hl=es
 * Allow collapsing list of headers by levels
 
 ### Nice to have and/or working on:
