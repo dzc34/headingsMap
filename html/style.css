@@ -42,7 +42,7 @@ html, body {
     margin: 0;
     width: 95%;
     list-style: none;
-    background: #FFF url("data:image/png;base64,R0lGODlhAQAKAIAAAIiIiAAAACH5BAAAAAAALAAAAAABAAoAAAIDhI8FADs=") 3px top repeat-y;
+    background: #FFF url(icons/tree_d.gif) 3px top repeat-y;
 }
 
 #headingsMapWrapper #headingsMap_outline ul ul,
