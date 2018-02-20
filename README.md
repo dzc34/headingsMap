@@ -10,6 +10,7 @@
 * Allow collapsing list of headers by levels
 
 ### Nice to have and/or working on:
+* Scroll to section even if it doesn't have header
 * Create a page with the documentation
 * Show information of all documents that are present, including those that are inside iframes
 * Improve (better code and performance) the changes detection and updates
