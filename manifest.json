@@ -1,9 +1,9 @@
 {
   "name": "headingsMap",
-  "description": "To show the headings structure of the documents",
+  "description": "To show (and audit) the headings structure",
   "author": "Rumoroso",
   "manifest_version": 2,
-  "version": "3.0.0",
+  "version": "3.1.0",
   "background": {
     "scripts": [
       "background.js"
@@ -24,7 +24,8 @@
     "html/*"
   ],
   "options_ui": {
-    "page": "options/options.html"
+    "page": "options/options.html",
+    "chrome_style": true
   },
   "commands": {
     "_execute_browser_action": {

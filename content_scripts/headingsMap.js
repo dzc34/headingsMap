@@ -2,7 +2,8 @@
     var body, bodyParent,
         headingMap, outlineMap,
         outlineMapTabLink, headingsTabLink,
-        settings, showOutLevels, showOutElem, showOutError, showHeadLevels, showHeadError, showHeadErrorH1,
+        settings,
+        showOutLevels, showOutElem, showOutError, showHeadLevels, showHeadError, showHeadErrorH1,
         iframeWidget, iframeContentDocument, iframeBody,
         defaultSettings = {
             showHeadLevels: true,
@@ -50,7 +51,7 @@
 
     onEndingDOMChangeCallback = function (mutations) {
         var headingsMapWidget = getWidget(),
-            iframeBodyInnerHTML = replaceAll(iframeBody.innerHTML, ' style="display: none;"', ''),
+            iframeBodyInnerHTML = iframeBody ? replaceAll(iframeBody.innerHTML, ' style="display: none;"', '') : '',
             headingsMapWidgetInnerHTML = '<div id="headingsMapWrapper">' + replaceAll(headingsMapWidget.innerHTML, ' style="display: none;"', '') + '</div>';
 
         if (replaceAll(iframeBodyInnerHTML, ' collapsed', '') != replaceAll(headingsMapWidgetInnerHTML, ' collapsed', '')) {
@@ -465,7 +466,7 @@
     }
 
     function scrollToHeader(event) {
-        //TODO: replace "document" with the correct one
+        // This only considers the current document
         var headerElement = document.getElementById(event.target.getAttribute('data-header-id'));
 
         if (headerElement) {
@@ -495,18 +496,17 @@
     function getWidget() {
         var widgetContent, widgetLists, collapser;
 
-        documentWindows = getDocuments();
-
         headingMap = createElement('div', {id: headingsMapId});
         outlineMap = createElement('div', {id: outlineMapId});
 
         headingMap.appendChild(headingsMap(window, 0));
         outlineMap.appendChild(HTML5Outline(window, 0));
 
-//        for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
-//            headingMap.appendChild(headingsMap(documentWindows[i], i));
-//            outlineMap.appendChild(HTML5Outline(documentWindows[i], i));
-//        }
+        // documentWindows = getDocuments();
+        // for (var i = 0, documentsLength = documentWindows.length; i < documentsLength; i++) {
+        //     headingMap.appendChild(headingsMap(documentWindows[i], i));
+        //     outlineMap.appendChild(HTML5Outline(documentWindows[i], i));
+        // }
 
         widgetContent = getWidgetContent(headingMap, outlineMap);
 
