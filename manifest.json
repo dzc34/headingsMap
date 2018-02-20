@@ -33,5 +33,11 @@
         "default": "Ctrl+Shift+O"
       }
     }
+  },
+  "applications": {
+    "gecko": {
+      "id": "headings@niquelheadings.net",
+      "strict_min_version": "58.0a1"
+    }
   }
 }
