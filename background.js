@@ -31,7 +31,8 @@ function connected(portFromCS) {
 function sendActionToHeadingsMapScript(action){
     var message = {action: action};
 
-    chrome.storage.local.get(null, sendActionWithSettings);
+    chrome.storage
+        .local.get(['showHeadLevels', 'showHeadError', 'showHeadErrorH1', 'showOutLevels', 'showOutElem', 'showOutError'], sendActionWithSettings);
 
     function sendActionWithSettings(settings) {
         message.settings = settings;

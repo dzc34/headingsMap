@@ -1,8 +1,13 @@
-var headingsMapPort = browser.runtime.connect({name: 'port-from-cs'});
+var headingsMapPort = chrome.runtime.connect({name: 'port-from-cs'});
+
+document.addEventListener('DOMContentLoaded', initialize);
 
 function initialize() {
     var select = document.getElementsByTagName('select'),
-        settings = browser.storage.local.get();
+        settings = chrome.storage.local.get(['showHeadLevels', 'showHeadError', 'showHeadErrorH1', 'showOutLevels', 'showOutElem', 'showOutError'], setInitialValues);
+
+    // FF: chrome.storage.local.get returns a promise
+    // Chrome: chrome.storage.local.get uses a callback
 
     for (var i = 0, selectLength = select.length; i < selectLength; i++) {
         select[i].onchange = function () {
@@ -28,11 +33,8 @@ function initialize() {
             optionValue = el.children[el.selectedIndex].value === 'true';
 
         option[optionId] = optionValue;
-
-        browser.storage.local.set(option);
+        chrome.storage.local.set(option);
 
         headingsMapPort.postMessage({action: 'update'});
     }
 }
-
-document.addEventListener('DOMContentLoaded', initialize);
