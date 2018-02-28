@@ -45,21 +45,6 @@
 
     let bodyMutationEndingObserver, onEndingDOMChangeCallback;
 
-    function replaceAll(str, find, replace) {
-        return str.replace(new RegExp(find, 'g'), replace);
-    }
-
-    onEndingDOMChangeCallback = function (mutations) {
-        var headingsMapWidget = getWidget(),
-            iframeBodyInnerHTML = iframeBody ? replaceAll(iframeBody.innerHTML, ' style="display: none;"', '') : '',
-            headingsMapWidgetInnerHTML = '<div id="headingsMapWrapper">' + replaceAll(headingsMapWidget.innerHTML, ' style="display: none;"', '') + '</div>';
-
-        if (replaceAll(iframeBodyInnerHTML, ' collapsed', '') != replaceAll(headingsMapWidgetInnerHTML, ' collapsed', '')) {
-            updateWidget(headingsMapWidget);
-        }
-    };
-    bodyMutationEndingObserver = addMutationObserver(body, mutationObserverParams, debounceFn(onEndingDOMChangeCallback, false));
-
     chrome.runtime.onMessage.addListener((message) => {
         settings = Object.assign({}, defaultSettings, message.settings);
 
@@ -656,6 +641,17 @@
 
     function openWidget(widgetContent) {
         iframeWidget = createIframeWidget(widgetContent);
+
+        onEndingDOMChangeCallback = function (mutations) {
+            var headingsMapWidget = getWidget(),
+                iframeBodyInnerHTML = iframeBody ? replaceAll(iframeBody.innerHTML, ' style="display: none;"', '') : '',
+                headingsMapWidgetInnerHTML = '<div id="headingsMapWrapper">' + replaceAll(headingsMapWidget.innerHTML, ' style="display: none;"', '') + '</div>';
+
+            if (replaceAll(iframeBodyInnerHTML, ' collapsed', '') != replaceAll(headingsMapWidgetInnerHTML, ' collapsed', '')) {
+                updateWidget(headingsMapWidget);
+            }
+        };
+        bodyMutationEndingObserver = addMutationObserver(body, mutationObserverParams, debounceFn(onEndingDOMChangeCallback, false));
     }
 
     function closeWidget() {
@@ -823,6 +819,10 @@
         observer.observe(elementToObserve, config);
 
         return observer;
+    }
+
+    function replaceAll(str, find, replace) {
+        return str.replace(new RegExp(find, 'g'), replace);
     }
 
     function sendMessageToBackgroundScript(messageObject) {
