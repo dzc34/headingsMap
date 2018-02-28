@@ -659,13 +659,16 @@
     }
 
     function closeWidget() {
-        var widget = document.getElementById(headingsMapIframeWrapperId),
-            widgetParent = widget.parentNode;
+        var widget, widgetParent;
+
+        bodyMutationEndingObserver.disconnect();
+
+        widget = document.getElementById(headingsMapIframeWrapperId);
+        widgetParent = widget.parentNode;
 
         widgetParent.removeChild(widget);
         widgetParent.removeAttribute('data-headings-map-active');
         cleanHeaderIds();
-        bodyMutationEndingObserver()
     }
 
     function createIframeWidget(widgetContent) {
@@ -819,7 +822,7 @@
         // Start observing the target node for configured mutations
         observer.observe(elementToObserve, config);
 
-        return observer.disconnect;
+        return observer;
     }
 
     function sendMessageToBackgroundScript(messageObject) {
